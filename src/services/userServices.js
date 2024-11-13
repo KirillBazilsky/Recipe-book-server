@@ -28,6 +28,7 @@ export const updateUser = async (userId, name, email, password) => {
   }
 
   const updatedData = { name, email };
+  
   if (password) {
     updatedData.password = password;
   }

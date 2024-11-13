@@ -7,6 +7,7 @@ import router from "./src/routes/router.js";
 import TokenService from "./src/services/tokenService.js";
 
 dotenv.config();
+
 export const tokenService = new TokenService(process.env.JWT_SECRET);
 
 const app = express();

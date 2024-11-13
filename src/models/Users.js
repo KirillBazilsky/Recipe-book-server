@@ -10,10 +10,7 @@ const userSchema = new mongoose.Schema({
     required: true,
     validate: {
       validator: function (value) {
-        if (this.isModified("password") && !passwordValidator.test(value)) {
-          return false;
-        }
-        return true;
+        return !(this.isModified("password") && !passwordValidator.test(value))
       },
       message:
         "Password must be at least 8 characters long, contain at least one uppercase letter, one number, and one special character.",

@@ -3,7 +3,7 @@ import express from 'express';
 
 const authRouter = express.Router();
 
-authRouter.post('/', registerUser);
+authRouter.post('/register', registerUser);
 
 authRouter.post('/login', loginUser);
 

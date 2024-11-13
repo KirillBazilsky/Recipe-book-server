@@ -13,6 +13,7 @@ export const addRecipe = async (req, res) => {
     const { name, ingredients, instructions, category } = req.body;
 
     const user = await findUserById(userId);
+
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -33,6 +34,7 @@ export const addRecipe = async (req, res) => {
         .status(400)
         .json({ message: "Recipe with this name already exists" });
     }
+    
     res.status(500).json({ error: error.message });
   }
 };
