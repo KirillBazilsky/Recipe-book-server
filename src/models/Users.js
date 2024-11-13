@@ -1,8 +1,6 @@
-const mongoose = require("mongoose");
-const bcrypt = require("bcryptjs");
-
-const passwordValidator =
-  /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+import mongoose from "mongoose";
+import bcrypt from "bcryptjs";
+import { passwordValidator } from "../services/authServices.js";
 
 const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
@@ -12,7 +10,10 @@ const userSchema = new mongoose.Schema({
     required: true,
     validate: {
       validator: function (value) {
-        return passwordValidator.test(value);
+        if (this.isModified("password") && !passwordValidator.test(value)) {
+          return false;
+        }
+        return true;
       },
       message:
         "Password must be at least 8 characters long, contain at least one uppercase letter, one number, and one special character.",
@@ -24,7 +25,9 @@ userSchema.index({ name: 1 }, { unique: true });
 userSchema.index({ email: 1 }, { unique: true });
 
 userSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) return next();
+  if (!this.isModified("password")) {
+    return next();
+  }
 
   try {
     const salt = await bcrypt.genSalt(10);
@@ -36,9 +39,7 @@ userSchema.pre("save", async function (next) {
 });
 
 userSchema.methods.matchPassword = async function (enteredPassword) {
-  return await bcrypt.compare(enteredPassword, this.password);
+  return bcrypt.compare(enteredPassword, this.password);
 };
 
-const User = mongoose.model("User", userSchema);
-
-module.exports = { User, passwordValidator };
+export const User = mongoose.model("User", userSchema);

@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from 'mongoose'
 
 const recipeSchema = new mongoose.Schema(
   {
@@ -22,6 +22,4 @@ const recipeSchema = new mongoose.Schema(
 
 recipeSchema.index({ name: 1 }, { unique: true });
 
-const Recipe = mongoose.model("Recipe", recipeSchema);
-
-module.exports = Recipe;
+export const Recipe = mongoose.model("Recipe", recipeSchema);

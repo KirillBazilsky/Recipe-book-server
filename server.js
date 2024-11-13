@@ -1,27 +1,34 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
-require('dotenv').config();
-const recipeRoutes = require('./routes/recipeRoutes'); 
-const userRoutes = require('./routes/userRoutes');
-const authRoutes = require('./routes/authRoutes');
-const favoritesRoutes = require('./routes/favoritesRoutes')
-const cookieParser = require('cookie-parser');
+import express from "express";
+import mongoose from "mongoose";
+import bodyParser from "body-parser";
+import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
+import router from "./src/routes/router.js";
+import TokenService from "./src/services/tokenService.js";
+
+dotenv.config();
+export const tokenService = new TokenService(process.env.JWT_SECRET);
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT;
 
-mongoose.connect('mongodb://localhost:27017/recipeBook')
-  .then(() => console.log('Connected to MongoDB'))
-  .catch((error) => console.error('Error connecting to MongoDB:', error));
+async function startServer() {
+  try {
+    await mongoose.connect(process.env.DB_URL);
 
-app.use(bodyParser.json());
-app.use(cookieParser());
-app.use('/api/recipes', recipeRoutes); 
-app.use('/api/users', userRoutes);
-app.use('/api/login', authRoutes);
-app.use('/api/favorites', favoritesRoutes);
+    console.log("Connected to MongoDB");
 
-app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
-});
+    app.use(bodyParser.json());
+    app.use(cookieParser());
+    app.use("/api", router);
+
+    app.listen(port, () => {
+      console.log(`Server is running on http://localhost:${port}`);
+    });
+  } catch (error) {
+    console.error("Error connecting to MongoDB:", error);
+    process.exit(1);
+  }
+}
+
+startServer();
