@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import mongoose from "mongoose";
 import bodyParser from "body-parser";
 import dotenv from "dotenv";
@@ -19,6 +20,11 @@ async function startServer() {
 
     console.log("Connected to MongoDB");
 
+    app.use(cors({
+      origin: '*',
+      methods: ['GET', 'POST', 'PUT', 'DELETE'],
+      allowedHeaders: ['Content-Type', 'Authorization'],
+    }));
     app.use(bodyParser.json());
     app.use(cookieParser());
     app.use("/api", router);

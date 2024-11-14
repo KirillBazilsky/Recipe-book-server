@@ -1,23 +1,25 @@
 import { tokenService } from "../../server.js";
 import { cookieOptions } from "../config/constants.js";
-import { createUser, findUserByEmail, verifyPassword } from "../services/authServices.js";
+import {
+  createUser,
+  findUserByEmail,
+  verifyPassword,
+} from "../services/authServices.js";
 
 export const loginUser = async (req, res) => {
-  const { email, password } = req.body;
-  
+  const { email, password } = req.body.data;
   try {
     const user = await findUserByEmail(email);
-    
     if (!user) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
-    
+
     const matched = await verifyPassword(user, password);
 
     if (!matched) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
-    
+
     const token = tokenService.generateToken({
       userId: user._id,
       name: user.name,
@@ -25,7 +27,12 @@ export const loginUser = async (req, res) => {
 
     res.cookie("token", token, cookieOptions);
 
-    res.status(200).json({ message: "Login successful" });
+    res
+      .status(200)
+      .json({
+        message: "Login successful",
+        user: { name: user.name, email: user.email, _id: user._id },
+      });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: error.message });
@@ -34,7 +41,7 @@ export const loginUser = async (req, res) => {
 
 export const registerUser = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password } = req.body.data;
 
     const user = await createUser(name, email, password);
 
@@ -46,7 +53,7 @@ export const registerUser = async (req, res) => {
     if (error.message === "User with this email already exists") {
       return res.status(400).json({ message: error.message });
     }
-    
+
     if (error.name === "ValidationError") {
       return res.status(400).json({ message: error.message });
     }
