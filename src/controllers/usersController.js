@@ -3,7 +3,7 @@ import { createUser, updateUser } from "../services/userServices.js";
 const updateUserController = async (req, res) => {
   try {
     const { userId } = req.params;
-    const { name, email, password } = req.body;
+    const { name, email, password } = req.body.data;
     const user = await updateUser(userId, name, email, password);
 
     res.status(200).json({

@@ -6,7 +6,7 @@ import {
 
 export const addRecipeToFavorites = async (req, res) => {
   try {
-    const { userId, recipeId } = req.body;
+    const { userId, recipeId } = req.body.data;
 
     await addRecipeToUserFavorites(userId, recipeId);
 
@@ -18,7 +18,7 @@ export const addRecipeToFavorites = async (req, res) => {
 
 export const removeRecipeFromFavorites = async (req, res) => {
   try {
-    const { userId, recipeId } = req.body;
+    const { userId, recipeId } = req.body.data;
 
     await removeRecipeFromUserFavorites(userId, recipeId);
     
