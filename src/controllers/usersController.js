@@ -1,6 +1,7 @@
-import { createUser, updateUser } from "../services/userServices.js";
+import { findUserById, updateUser } from "../services/userServices.js";
+import { User } from "../models/Users.js";
 
-const updateUserController = async (req, res) => {
+const updateUserRequest = async (req, res) => {
   try {
     const { userId } = req.params;
     const { name, email, password } = req.body.data;
@@ -18,4 +19,20 @@ const updateUserController = async (req, res) => {
   }
 };
 
-export { updateUserController };
+export const getUser = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const user = await findUserById(userId);   
+    
+    res.status(200).json({
+      message: "User successfully found",
+      user: { name: user.name, email: user.email, _id: user._id },
+    });
+  } catch (error) {
+    if (error.message === "User not found") {
+      return res.status(404).json({ message: error.message });
+    }
+    res.status(500).json({ message: error.message });
+  }
+};
+export { updateUserRequest };

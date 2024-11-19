@@ -82,7 +82,7 @@ export const deleteRecipe = async (req, res) => {
 
 export const getRecipes = async (req, res) => {
   try {
-    const { userId, name, category, ingredients } = req.body.data;
+    const { userId, name, category, ingredients } = req.params;
     const filter = buildFilter({ userId, name, category, ingredients });
     const recipes = await findRecipes(filter);
 
