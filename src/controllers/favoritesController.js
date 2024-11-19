@@ -6,9 +6,10 @@ import {
 
 export const addRecipeToFavorites = async (req, res) => {
   try {
+    const {favoritesId} = req.params;
     const { userId, recipeId } = req.body.data;
 
-    await addRecipeToUserFavorites(userId, recipeId);
+    await addRecipeToUserFavorites(favoritesId, userId, recipeId);
 
     res.status(200).json({ message: "Recipe added to favorites" });
   } catch (error) {
@@ -18,9 +19,10 @@ export const addRecipeToFavorites = async (req, res) => {
 
 export const removeRecipeFromFavorites = async (req, res) => {
   try {
-    const { userId, recipeId } = req.body.data;
+    const {favoritesId} = req.params;
+    const { recipeId } = req.body.data;
 
-    await removeRecipeFromUserFavorites(userId, recipeId);
+    await removeRecipeFromUserFavorites(favoritesId, userId, recipeId);
     
     res.status(200).json({ message: "Recipe removed from favorites" });
   } catch (error) {

@@ -8,9 +8,9 @@ import express from 'express';
 
 const favoritesRouter = express.Router();
 
-favoritesRouter.post("/of/:userId", authMiddleware, addRecipeToFavorites);
+favoritesRouter.post("/:favoritesId", authMiddleware, addRecipeToFavorites);
 
-favoritesRouter.delete("/of/:userId", authMiddleware, removeRecipeFromFavorites);
+favoritesRouter.delete("/:favoritesId", authMiddleware, removeRecipeFromFavorites);
 
 favoritesRouter.get("/of/:userId", authMiddleware, getUserFavorites);
 
