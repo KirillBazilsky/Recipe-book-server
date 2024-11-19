@@ -1,7 +1,7 @@
 import { Favorite } from "../models/Favorites.js";
 
 export const findFavoritesById = async (favoritesId) => {
-  return await Favorite.findById({ favoritesId });
+  return Favorite.findById({ favoritesId });
 };
 
 export const addRecipeToUserFavorites = async (favoritesId, userId, recipeId) => {
