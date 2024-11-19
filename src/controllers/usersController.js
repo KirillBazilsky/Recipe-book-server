@@ -9,7 +9,7 @@ const updateUserRequest = async (req, res) => {
 
     res.status(200).json({
       message: "User updated successfully",
-      user: { name: user.name, email: user.email, _id: user._id },
+      user: { name: user.name, email: user.email, id: user.id },
     });
   } catch (error) {
     if (error.message === "User not found") {
@@ -26,7 +26,7 @@ export const getUser = async (req, res) => {
     
     res.status(200).json({
       message: "User successfully found",
-      user: { name: user.name, email: user.email, _id: user._id },
+      user: { name: user.name, email: user.email, id: user.id },
     });
   } catch (error) {
     if (error.message === "User not found") {

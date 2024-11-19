@@ -3,7 +3,7 @@ import { mergeDefined } from "./helpers.js";
 
 export const findUserByEmail = async (email) => User.findOne({ email });
 
-export const findUserById = async (_id) => User.findById(_id);
+export const findUserById = async (id) => User.findById(id);
 
 export const createUser = async (name, email, password) => {
   const existingUser = await findUserByEmail(email);

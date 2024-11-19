@@ -21,7 +21,7 @@ export const loginUser = async (req, res) => {
     }
 
     const token = tokenService.generateToken({
-      userId: user._id,
+      userId: user.id,
       name: user.name,
     });
 
@@ -31,7 +31,7 @@ export const loginUser = async (req, res) => {
       .status(200)
       .json({
         message: "Login successful",
-        user: { name: user.name, email: user.email, _id: user._id },
+        user: { name: user.name, email: user.email, id: user.id },
       });
   } catch (error) {
     console.error(error);
@@ -47,7 +47,7 @@ export const registerUser = async (req, res) => {
 
     res.status(201).json({
       message: "User created successfully",
-      user: { name: user.name, email: user.email, _id: user._id },
+      user: { name: user.name, email: user.email, id: user.id },
     });
   } catch (error) {
     if (error.message === "User with this email already exists") {
