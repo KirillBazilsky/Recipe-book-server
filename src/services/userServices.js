@@ -1,5 +1,4 @@
 import { User } from "../models/Users.js";
-import { passwordValidator } from "./authServices.js";
 import { mergeDefined } from "./helpers.js";
 
 export const findUserByEmail = async (email) => User.findOne({ email });

@@ -9,8 +9,7 @@ import { findUserById } from "../services/userServices.js";
 
 export const addRecipe = async (req, res) => {
   try {
-    const { userId } = req.params;
-    const { name, ingredients, instructions, category } = req.body.data;
+    const { userId, name, ingredients, instructions, category } = req.body.data;
 
     const user = await findUserById(userId);
 
@@ -41,7 +40,8 @@ export const addRecipe = async (req, res) => {
 
 export const updateRecipe = async (req, res) => {
   try {
-    const { recipeId, name, ingredients, instructions, category } = req.body.data;
+    const {recipeId} = req.params;
+    const { name, ingredients, instructions, category } = req.body.data;
     const updatedData = { name, ingredients, instructions, category };
     const recipe = await updateRecipeById(recipeId, updatedData);
 
@@ -62,7 +62,7 @@ export const updateRecipe = async (req, res) => {
 
 export const deleteRecipe = async (req, res) => {
   try {
-    const { recipeId } = req.body.data;
+    const { recipeId } = req.params;
 
     if (!recipeId) {
       return res.status(400).json({ error: "Recipe ID is required" });
@@ -82,7 +82,7 @@ export const deleteRecipe = async (req, res) => {
 
 export const getRecipes = async (req, res) => {
   try {
-    const { userId, name, category, ingredients } = req.body.data;
+    const { userId, name, category, ingredients } = req.query;
     const filter = buildFilter({ userId, name, category, ingredients });
     const recipes = await findRecipes(filter);
 

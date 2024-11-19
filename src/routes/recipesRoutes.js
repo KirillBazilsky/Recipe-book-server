@@ -10,12 +10,12 @@ import { validateRecipeId } from "../middlewares/validateRecipeId.js";
 
 const recipesRouter = express.Router();
 
-recipesRouter.post("/:userId", authMiddleware, addRecipe);
+recipesRouter.post("/", authMiddleware, addRecipe);
 
-recipesRouter.put("/:userId", authMiddleware, validateRecipeId, updateRecipe);
+recipesRouter.put("/:recipeId", authMiddleware, validateRecipeId, updateRecipe);
 
-recipesRouter.delete("/:userId", authMiddleware, validateRecipeId, deleteRecipe);
+recipesRouter.delete("/:recipeId", authMiddleware, validateRecipeId, deleteRecipe);
 
-recipesRouter.get("/:userId", getRecipes);
+recipesRouter.get("/", getRecipes);
 
 export default recipesRouter;

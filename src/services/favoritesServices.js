@@ -1,11 +1,11 @@
 import { Favorite } from "../models/Favorites.js";
 
-export const findUserFavorites = async (userId) => {
-  return await Favorite.findOne({ userId });
+export const findFavoritesById = async (favoritesId) => {
+  return Favorite.findById({ favoritesId });
 };
 
-export const addRecipeToUserFavorites = async (userId, recipeId) => {
-  const existingFavorite = await findUserFavorites(userId);
+export const addRecipeToUserFavorites = async (favoritesId, userId, recipeId) => {
+  const existingFavorite = await findFavoritesById(favoritesId);
 
   const updateFavoriteRecipes = () => {
     if (!existingFavorite) {
@@ -25,8 +25,8 @@ export const addRecipeToUserFavorites = async (userId, recipeId) => {
   return newFavorite;
 };
 
-export const removeRecipeFromUserFavorites = async (userId, recipeId) => {
-  const favorite = await findUserFavorites(userId);
+export const removeRecipeFromUserFavorites = async (favoritesId, recipeId) => {
+  const favorite = await findFavoritesById(favoritesId);
 
   if (!favorite) {
     throw new Error("User has no favorite recipes");
