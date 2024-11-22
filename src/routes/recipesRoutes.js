@@ -21,5 +21,4 @@ recipesRouter.get("/", getRecipes);
 
 recipesRouter.get("/:recipeId", getRecipe);
 
-
 export default recipesRouter;
