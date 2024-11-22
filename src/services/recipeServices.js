@@ -35,7 +35,7 @@ export const deleteRecipeById = async (recipeId) => {
   return recipe;
 };
 
-export const buildFilter = ({ userId, name, category, ingredients }) => {
+export const buildFilter = ({ userId, name, category, ingredients, creator, instructions }) => {
     const filter = {};
   
     if (userId) {
@@ -49,6 +49,12 @@ export const buildFilter = ({ userId, name, category, ingredients }) => {
     }
     if (ingredients) {
       filter.ingredients = { $elemMatch: { name: { $regex: ingredients } } };
+    }
+    if (instructions) {
+      filter.instructions = { $regex: instructions, $options: 'i' };
+    }
+    if (creator) {
+      filter['creator.name'] = { $regex: creator, $options: 'i' };
     }
   
     return filter;
