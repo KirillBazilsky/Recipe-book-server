@@ -6,7 +6,7 @@ const recipeIdSchema = z.object({
 
 export const validateRecipeId = (req, res, next) => {
   try {
-    recipeIdSchema.parse(req.body.data);
+    recipeIdSchema.parse(req.params);
     next();
   } catch (error) {
     res.status(400).json({ error: error.errors[0].message });
