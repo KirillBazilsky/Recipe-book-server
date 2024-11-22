@@ -4,20 +4,20 @@ import {
   deleteRecipeById,
   findRecipes,
   buildFilter,
+  findRecipeById,
 } from "../services/recipeServices.js";
 import { findUserById } from "../services/userServices.js";
 
 export const addRecipe = async (req, res) => {
   try {
-    const { userId, name, ingredients, instructions, category } = req.body.data;
+    const { name, ingredients, instructions, category, creator } = req.body.data;
 
-    const user = await findUserById(userId);
+    const user = await findUserById(creator.id);
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    const creator = { name: user.name, id: user.id };
     const recipe = await createRecipe({
       name,
       ingredients,
@@ -82,8 +82,8 @@ export const deleteRecipe = async (req, res) => {
 
 export const getRecipes = async (req, res) => {
   try {
-    const { userId, name, category, ingredients } = req.query;
-    const filter = buildFilter({ userId, name, category, ingredients });
+    const { userId, name, category, ingredients, instructions, creator } = req.query;
+    const filter = buildFilter({ userId, name, category, ingredients, instructions, creator  });
     const recipes = await findRecipes(filter);
 
     if (!recipes.length) {
@@ -91,6 +91,21 @@ export const getRecipes = async (req, res) => {
     }
 
     res.status(200).json({ recipes });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const getRecipe = async (req, res) => {
+  try {
+    const { recipeId } = req.params;
+    const recipe = await findRecipeById(recipeId);
+
+    if (!recipe) {
+      return res.status(404).json({ message: "No recipe found" });
+    }
+
+    res.status(200).json({ recipe });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
