@@ -21,7 +21,8 @@ async function startServer() {
     console.log("Connected to MongoDB");
 
     app.use(cors({
-      origin: '*',
+      origin: process.env.CLIENT_ORIGIN,
+      credentials: true,
       methods: ['GET', 'POST', 'PUT', 'DELETE'],
       allowedHeaders: ['Content-Type', 'Authorization'],
     }));
@@ -32,6 +33,7 @@ async function startServer() {
     app.listen(port, () => {
       console.log(`Server is running on http://localhost:${port}`);
     });
+
   } catch (error) {
     console.error("Error connecting to MongoDB:", error);
     process.exit(1);

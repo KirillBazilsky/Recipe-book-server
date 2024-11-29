@@ -1,5 +1,5 @@
 import { findUserById, updateUser } from "../services/userServices.js";
-import { User } from "../models/Users.js";
+import { getUserFavoritesId } from "../services/favoritesServices.js";
 
 const updateUserRequest = async (req, res) => {
   try {
@@ -22,11 +22,12 @@ const updateUserRequest = async (req, res) => {
 export const getUser = async (req, res) => {
   try {
     const { userId } = req.params;
-    const user = await findUserById(userId);   
+    const user = await findUserById(userId);
+    const favoritesId = await getUserFavoritesId(userId);  
     
     res.status(200).json({
       message: "User successfully found",
-      user: { name: user.name, email: user.email, id: user.id },
+      user: { name: user.name, email: user.email, id: user.id, favoritesId },
     });
   } catch (error) {
     if (error.message === "User not found") {

@@ -5,6 +5,7 @@ import {
   findUserByEmail,
   verifyPassword,
 } from "../services/authServices.js";
+import { getUserFavoritesId } from "../services/favoritesServices.js";
 
 export const loginUser = async (req, res) => {
   const { email, password } = req.body.data;
@@ -20,6 +21,8 @@ export const loginUser = async (req, res) => {
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
+    const favoritesId = await getUserFavoritesId(user.id); 
+
     const token = tokenService.generateToken({
       userId: user.id,
       name: user.name,
@@ -31,7 +34,7 @@ export const loginUser = async (req, res) => {
       .status(200)
       .json({
         message: "Login successful",
-        user: { name: user.name, email: user.email, id: user.id },
+        user: { name: user.name, email: user.email, id: user.id, favoritesId },
       });
   } catch (error) {
     console.error(error);

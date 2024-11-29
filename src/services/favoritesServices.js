@@ -1,10 +1,19 @@
 import { Favorite } from "../models/Favorites.js";
 
 export const findFavoritesById = async (favoritesId) => {
-  return Favorite.findById({ favoritesId });
+  return Favorite.findById(favoritesId);
 };
 
-export const addRecipeToUserFavorites = async (favoritesId, userId, recipeId) => {
+export const addRecipeToUserFavorites = async (
+  favoritesId,
+  userId,
+  recipeId
+) => {
+
+  if (favoritesId === "new-favorites") {
+    favoritesId = null
+  }
+
   const existingFavorite = await findFavoritesById(favoritesId);
 
   const updateFavoriteRecipes = () => {
@@ -12,18 +21,27 @@ export const addRecipeToUserFavorites = async (favoritesId, userId, recipeId) =>
       return new Favorite({ userId, recipes: [recipeId] });
     }
 
-    existingFavorite.recipes = Array.from(new Set([...existingFavorite.recipes, recipeId]))
+    const recipeExists = existingFavorite.recipes
+      .map((id) => id.toString())
+      .includes(recipeId.toString());
 
-    return existingFavorite
+    if (recipeExists) {
+      throw new Error("Recipe already exists in favorites");
+    }
+
+    existingFavorite.recipes.push(recipeId);
+
+    return existingFavorite;
   };
 
-  const newFavorite =
-    updateFavoriteRecipes();
+  const newFavorite = updateFavoriteRecipes();
 
   await newFavorite.save();
 
   return newFavorite;
 };
+
+
 
 export const removeRecipeFromUserFavorites = async (favoritesId, recipeId) => {
   const favorite = await findFavoritesById(favoritesId);
@@ -35,7 +53,7 @@ export const removeRecipeFromUserFavorites = async (favoritesId, recipeId) => {
   favorite.recipes = favorite.recipes.filter(
     (id) => id.toString() !== recipeId
   );
-  
+
   await favorite.save();
 
   return favorite;
@@ -45,4 +63,14 @@ export const getUserFavoriteRecipes = async (userId) => {
   const favorite = await Favorite.findOne({ userId }).populate("recipes");
 
   return favorite ? favorite.recipes : null;
+};
+
+export const getUserFavoritesId = async (userId) => {
+  const favorite = await Favorite.findOne({ userId });
+
+  if(favorite){
+    return favorite._id.toString();
+  }
+  
+  return "";
 };
