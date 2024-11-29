@@ -5,12 +5,13 @@ const updateUserRequest = async (req, res) => {
     const { userId } = req.params;
     const { userId: authUserId } = req.user;
     const { name, email, password } = req.body.data;
-    const user = await updateUser(userId, name, email, password);
-
+    
     if (userId !== authUserId) {
       return res.status(404).json({ error: "Access denied" });
     }
-
+    
+    const user = await updateUser(userId, name, email, password);
+    
     res.status(200).json({
       message: "User updated successfully",
       user: { name: user.name, email: user.email, id: user.id },
@@ -40,7 +41,6 @@ export const getUser = async (req, res) => {
         name: user.name,
         email: user.email,
         id: user.id,
-        favoritesId: user.favoritesId,
       },
     });
   } catch (error) {

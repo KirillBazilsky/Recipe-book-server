@@ -35,11 +35,7 @@ export const getUserFavorites = async (req, res) => {
     const { userId } = req.user;
     const recipes = await getUserFavoriteRecipes(userId);
 
-    if (!recipes) {
-      return res.status(200).json({ message: "User has no favorite recipes" });
-    }
-
-    res.status(200).json(recipes);
+    res.status(200).json(recipes ?? []);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
