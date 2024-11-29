@@ -26,6 +26,7 @@ export const loginUser = async (req, res) => {
     const token = tokenService.generateToken({
       userId: user.id,
       name: user.name,
+      favoritesId: user.favoritesId
     });
 
     res.cookie("token", token, cookieOptions);

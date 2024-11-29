@@ -1,6 +1,6 @@
-import jwt from 'jsonwebtoken';
+import jwt from "jsonwebtoken";
 
-export const authMiddleware = (req, res, next) => {
+export const authMiddleware = async (req, res, next) => {
   const token = req.cookies?.token;
 
   if (!token) {
@@ -8,11 +8,19 @@ export const authMiddleware = (req, res, next) => {
   }
 
   try {
-    jwt.verify(token, process.env.JWT_SECRET); 
-    next(); 
+    const payload = await new Promise((resolve, reject) => {
+      jwt.verify(token, process.env.JWT_SECRET, (err, payload) => {
+        if (err) {
+          return reject(err);
+        }
+
+        resolve(payload);
+      });
+    });
+
+    req.user = payload;
+    next();
   } catch (error) {
     res.status(401).json({ message: "Invalid or expired token" });
   }
 };
-
-

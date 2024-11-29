@@ -6,10 +6,10 @@ import {
 
 export const addRecipeToFavorites = async (req, res) => {
   try {
-    const {favoritesId} = req.params;
-    const { userId, recipeId } = req.body.data;
+    const { userId, favoritesId } = req.user;
+    const { recipeId } = req.body.data;
 
-    await addRecipeToUserFavorites(favoritesId, userId, recipeId);
+    await addRecipeToUserFavorites(userId, favoritesId, recipeId);
 
     res.status(200).json({ message: "Recipe added to favorites" });
   } catch (error) {
@@ -19,11 +19,11 @@ export const addRecipeToFavorites = async (req, res) => {
 
 export const removeRecipeFromFavorites = async (req, res) => {
   try {
-    const {favoritesId} = req.params;
+    const { favoritesId } = req.user;
     const { recipeId } = req.body;
 
     await removeRecipeFromUserFavorites(favoritesId, recipeId);
-    
+
     res.status(200).json({ message: "Recipe removed from favorites" });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -32,7 +32,7 @@ export const removeRecipeFromFavorites = async (req, res) => {
 
 export const getUserFavorites = async (req, res) => {
   try {
-    const { userId } = req.params;
+    const { userId } = req.user;
     const recipes = await getUserFavoriteRecipes(userId);
 
     if (!recipes) {

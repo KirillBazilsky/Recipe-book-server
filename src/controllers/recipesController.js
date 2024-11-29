@@ -1,3 +1,4 @@
+import { Recipe } from "../models/Recipes.js";
 import {
   createRecipe,
   updateRecipeById,
@@ -6,16 +7,20 @@ import {
   buildFilter,
   findRecipeById,
 } from "../services/recipeServices.js";
-import { findUserById } from "../services/userServices.js";
 
 export const addRecipe = async (req, res) => {
   try {
-    const { name, ingredients, instructions, category, creator } = req.body.data;
+    const { name, ingredients, instructions, category } = req.body.data;
 
-    const user = await findUserById(creator.id);
+    const { userId, name: userName} = req.user;
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
+    }
+
+    const creator = {
+      name: userName,
+      id: userId
     }
 
     const recipe = await createRecipe({
@@ -41,7 +46,15 @@ export const addRecipe = async (req, res) => {
 export const updateRecipe = async (req, res) => {
   try {
     const {recipeId} = req.params;
+    const {userId} = req.user;
     const { name, ingredients, instructions, category } = req.body.data;
+
+    const existingRecipe = Recipe.findById(recipeId);
+
+    if (existingRecipe.creator.id !== userId) {
+      return res.status(404).json({ error: "Access denied" });
+    }
+
     const updatedData = { name, ingredients, instructions, category };
     const recipe = await updateRecipeById(recipeId, updatedData);
 
@@ -63,6 +76,12 @@ export const updateRecipe = async (req, res) => {
 export const deleteRecipe = async (req, res) => {
   try {
     const { recipeId } = req.params;
+    const {userId} = req.user;
+    const existingRecipe = await Recipe.findById(recipeId);
+
+    if (existingRecipe.creator.id !== userId) {
+      return res.status(404).json({ error: "Access denied" });
+    }
 
     if (!recipeId) {
       return res.status(400).json({ error: "Recipe ID is required" });
