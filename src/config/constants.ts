@@ -8,3 +8,9 @@ export const cookieOptions: ICookieOptions = {
     sameSite: "strict",
     maxAge: ONE_HOUR, 
   };
+
+export const userMessages: string[] = [
+  "User with this email already exists",
+  "ValidationError",
+  "User not found"
+]

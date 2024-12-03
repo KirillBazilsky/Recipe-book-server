@@ -1,6 +1,6 @@
-import { IRecipe, Recipe } from '../models/Recipes';
-import { mergeDefined } from './helpers';
-import { IFilters } from '../interfaces/filters';
+import { IRecipe, Recipe } from "../models/Recipes";
+import { mergeDefined } from "./helpers";
+import { IFilters } from "../interfaces/filters";
 
 export const findRecipeById = async (id: string) => Recipe.findById(id);
 
@@ -12,14 +12,16 @@ export const createRecipe = async (recipeData: Partial<IRecipe>) => {
   return recipe;
 };
 
-export const updateRecipeById = async (recipeId: string, updatedData: Partial<IRecipe>) => {
+export const updateRecipeById = async (
+  recipeId: string,
+  updatedData: Partial<IRecipe>
+) => {
   const recipe: IRecipe | null = await findRecipeById(recipeId);
 
   if (recipe) {
-
-    const updatedRecipe: IRecipe = mergeDefined<IRecipe>(updatedData,recipe)
-
+    const updatedRecipe: IRecipe = mergeDefined<IRecipe>(updatedData, recipe);
     Object.assign(recipe, updatedRecipe);
+
     await recipe.save();
   }
 
@@ -27,46 +29,51 @@ export const updateRecipeById = async (recipeId: string, updatedData: Partial<IR
 };
 
 export const deleteRecipeById = async (recipeId: string) => {
-  const recipe = await findRecipeById(recipeId);
+  try {
+    const recipe = await Recipe.findByIdAndDelete(recipeId);
 
-  if (recipe) {
-    await recipe.deleteOne();
+    if (!recipe) {
+      throw new Error(`Recipe with id ${recipeId} not found`);
+    }
+
+    return recipe;
+  } catch (error) {
+    throw error;
   }
-
-  return recipe;
 };
 
-export const buildFilter = ({
+export const createFilter = ({
   userId,
   name,
   category,
   ingredients,
   creator,
-  instructions
-}: IFilters): Record<string, any> => { 
-  const filter: { [key: string]: any } = {};
-  
+  instructions,
+}: IFilters): Record<string, any> => {
+  const filter: Record<string, any> = {};
+
   if (userId) {
-    filter['creator.id'] = userId;
+    filter["creator.id"] = userId;
   }
   if (name) {
-    filter.name = { $regex: name, $options: 'i' };
+    filter.name = { $regex: name, $options: "i" };
   }
   if (category) {
-    filter.category = { $regex: category, $options: 'i' };
+    filter.category = { $regex: category, $options: "i" };
   }
   if (ingredients) {
     filter.ingredients = { $elemMatch: { name: { $regex: ingredients } } };
   }
   if (instructions) {
-    filter.instructions = { $regex: instructions, $options: 'i' };
+    filter.instructions = { $regex: instructions, $options: "i" };
   }
   if (creator) {
-    filter['creator.name'] = { $regex: creator, $options: 'i' };
+    filter["creator.name"] = { $regex: creator, $options: "i" };
   }
 
   return filter;
 };
-  
 
-export const findRecipes = async (filter: Record<string, any>): Promise<IRecipe[] | []> => Recipe.find(filter);
+export const findRecipes = async (
+  filter: Record<string, any>
+): Promise<IRecipe[] | []> => Recipe.find(filter);

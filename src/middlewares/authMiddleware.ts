@@ -6,7 +6,7 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
   const token = req.cookies?.token;
 
   if (!token) {
-    res.status(403).json({ message: "Access denied, token missing" });
+    return res.status(403).json({ message: "Access denied, token missing" });
   }
 
   try {

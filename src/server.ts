@@ -39,7 +39,7 @@ async function startServer() {
     app.use(cookieParser());
     app.use("/api", router);
 
-        app.listen(port, () => {
+    app.listen(port, () => {
       console.log(`Server is running on http://localhost:${port}`);
     });
   } catch (error) {

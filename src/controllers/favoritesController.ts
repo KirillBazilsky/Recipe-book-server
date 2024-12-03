@@ -1,59 +1,54 @@
-import { JwtPayload } from "jsonwebtoken";
 import {
   addRecipeToUserFavorites,
   removeRecipeFromUserFavorites,
   getUserFavoriteRecipes,
 } from "../services/favoritesServices";
 import { Response, Request } from "express";
-import { MongooseError } from "mongoose";
+import { errorHandler } from "../services/helpers";
 
-export const addRecipeToFavorites = async (req: Request, res: Response) => {
+export const addRecipeToFavorites = async (
+  req: Request,
+  res: Response
+): Promise<Response | void> => {
   try {
-    const { userId, favoritesId } = req.user as JwtPayload;
+    const { userId, favoritesId } = req.user;
     const { recipeId } = req.body.data;
+    
 
     await addRecipeToUserFavorites(userId, favoritesId, recipeId);
 
-    res.status(200).json({ message: "Recipe added to favorites" });
-  } catch (error) {
-    if (error instanceof MongooseError) {
-      res.status(500).json({ error: error.message });
-    }
-
-     res.status(500).json({ message: "Unknown error occurred" });
+    return res.status(200).json({ message: "Recipe added to favorites" });
+  } catch (error: unknown) {
+    errorHandler(error, res);
   }
 };
 
 export const removeRecipeFromFavorites = async (
   req: Request,
   res: Response
-) => {
+): Promise<Response | void> => {
   try {
-    const { favoritesId } = req.user as JwtPayload;
+    const { favoritesId } = req.user;
     const { recipeId } = req.body;
 
     await removeRecipeFromUserFavorites(favoritesId, recipeId);
 
-    res.status(200).json({ message: "Recipe removed from favorites" });
-  } catch (error) {
-    if (error instanceof Error) {
-      res.status(500).json({ error: error.message });
-    }
-
-    res.status(500).json({ message: "Unknown error occurred" });
+    return res.status(200).json({ message: "Recipe removed from favorites" });
+  } catch (error: unknown) {
+    errorHandler(error, res);
   }
 };
 
-export const getUserFavorites = async (req: Request, res: Response) => {
+export const getUserFavorites = async (
+  req: Request,
+  res: Response
+): Promise<Response | void> => {
   try {
-    const { userId } = req.user as JwtPayload;
+    const { userId } = req.user;
     const recipes = await getUserFavoriteRecipes(userId);
 
-    res.status(200).json(recipes ?? []);
-  } catch (error) {
-    if (error instanceof MongooseError) {
-      res.status(500).json({ error: error.message });
-    }
-    res.status(500).json({ message: "Unknown error occurred" });
+    return res.status(200).json(recipes ?? []);
+  } catch (error: unknown) {
+    errorHandler(error, res);
   }
 };

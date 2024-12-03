@@ -6,7 +6,11 @@ export const findUserByEmail = async (email: string) => User.findOne({ email });
 
 export const findUserById = async (id: string) => User.findById(id);
 
-export const createUser = async (name: string, email: string, password: string) => {
+export const createUser = async (
+  name: string,
+  email: string,
+  password: string
+) => {
   const existingUser: IUser | null = await findUserByEmail(email);
 
   if (existingUser) {
@@ -14,29 +18,37 @@ export const createUser = async (name: string, email: string, password: string) 
   }
 
   const user = new User({ name, email, password });
-  
+
   await user.save();
 
   return user;
 };
 
-export const updateUser = async (userId: string, name: string, email: string, password: string) => {
+export const updateUser = async (
+  userId: string,
+  name: string,
+  email: string,
+  password: string
+) => {
   const user: IUser | null = await User.findById(userId);
 
   if (!user) {
     throw new Error("User not found");
   }
 
-  const updatedData: {name?: string, email?: string, password?: string} = { name, email };
-  
+  const updatedData: { name?: string; email?: string; password?: string } = {
+    name,
+    email,
+  };
+
   if (password) {
     updatedData.password = password;
   }
-  
-  const updatedUser = mergeDefined<IUser>(updatedData, user);
+
+  const updatedUser = mergeDefined(updatedData, user);
 
   Object.assign(user, updatedUser);
-  
+
   await user.save();
 
   return user;

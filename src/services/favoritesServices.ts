@@ -2,11 +2,13 @@ import mongoose from "mongoose";
 import { Favorite, IFavorite } from "../models/Favorites";
 
 export const addRecipeToUserFavorites = async (
-  userId: mongoose.Types.ObjectId,
-  favoritesId: mongoose.Types.ObjectId,
-  recipeId: mongoose.Types.ObjectId,
+  userId: string,
+  favoritesId: string,
+  recipeId: mongoose.Types.ObjectId
 ): Promise<IFavorite> => {
-  const existingFavorite: IFavorite | null =  await Favorite.findById(favoritesId);
+  const existingFavorite: IFavorite | null = await Favorite.findById(
+    favoritesId
+  );
 
   const updateFavoriteRecipes = () => {
     if (!existingFavorite) {
@@ -33,22 +35,26 @@ export const addRecipeToUserFavorites = async (
   return newFavorite;
 };
 
-
-
-export const removeRecipeFromUserFavorites = async (favoritesId: string, recipeId: string,) => {
+export const removeRecipeFromUserFavorites = async (
+  favoritesId: string,
+  recipeId: string
+) => {
   const favorite: IFavorite | null = await Favorite.findById(favoritesId);
 
   if (!favorite) {
     throw new Error("User has no favorite recipes");
   }
 
-  favorite.recipes = favorite.recipes.filter(
-    (favorite) => favorite._id.toString() !== recipeId
-  );
-
-  await favorite.save();
-
-  return favorite;
+  try {
+    await Favorite.updateOne(
+      { _id: favoritesId },
+      { $pull: { recipes: recipeId } }
+    );
+    
+    return favorite;
+  } catch (error: unknown) {
+    throw  error;
+  }
 };
 
 export const getUserFavoriteRecipes = async (userId: string) => {
@@ -60,9 +66,9 @@ export const getUserFavoriteRecipes = async (userId: string) => {
 export const getUserFavoritesId = async (userId: string) => {
   const favorite = await Favorite.findOne({ userId });
 
-  if(favorite){
+  if (favorite) {
     return favorite._id.toString();
   }
-  
+
   return "";
 };

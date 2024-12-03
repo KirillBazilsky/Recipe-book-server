@@ -1,78 +1,65 @@
 import { Response, Request } from "express";
-import { JwtPayload } from "jsonwebtoken";
-import { Error, MongooseError } from "mongoose";
 import { findUserById, updateUser } from "../services/userServices";
+import { errorHandler } from "../services/helpers";
 
-const updateUserRequest = async (req: Request, res: Response) => {
+const updateUserRequest = async (
+  req: Request,
+  res: Response
+): Promise<Response | void> => {
   try {
     const { userId } = req.params;
 
     if (!req.user) {
-      res.status(401).json({ error: "Unauthorized" });
+      return res.status(401).json({ error: "Unauthorized" });
     }
 
-    const { userId: authUserId } = req.user as JwtPayload;
+    const { userId: authUserId } = req.user ;
     const { name, email, password } = req.body.data;
 
     if (userId !== authUserId) {
-      res.status(401).json({ error: "Access denied" });
+      return res.status(401).json({ error: "Access denied" });
     }
 
     const user = await updateUser(userId, name, email, password);
 
-    res.status(200).json({
+    return res.status(200).json({
       message: "User updated successfully",
       user: { name: user.name, email: user.email, id: user.id },
     });
   } catch (error: unknown) {
-    if (error instanceof MongooseError) {
-      if (error.message === "User not found") {
-        res.status(404).json({ message: error.message });
-      }
-      res.status(500).json({ message: error.message });
-    }
-    res.status(500).json({ message: "Unknown error occurred" });
+    errorHandler(error, res);
   }
 };
 
-export const getUser = async (req: Request, res: Response) => {
+export const getUser = async (
+  req: Request,
+  res: Response
+): Promise<Response | void> => {
   try {
     const { userId } = req.params;
 
-    if (!req.user) {
-      res.status(401).json({ error: "Unauthorized" });
-    }
-
-    const { userId: authUserId } = req.user as JwtPayload;
+    const { userId: authUserId } = req.user ;
 
     if (userId !== authUserId) {
-      res.status(404).json({ error: "Access denied" });
+      return res.status(404).json({ error: "Access denied" });
     }
 
     const user = await findUserById(userId);
 
     if (!user) {
-      res.status(404).json({ error: "User not found" });
-    } else {
-      res.status(200).json({
-        message: "User successfully found",
-        user: {
-          name: user.name,
-          email: user.email,
-          id: user.id,
-        },
-      });
+      return res.status(404).json({ error: "User not found" });
     }
 
+    return res.status(200).json({
+      message: "User successfully found",
+      user: {
+        name: user.name,
+        email: user.email,
+        id: user.id,
+      },
+    });
   } catch (error: unknown) {
-    if (error instanceof MongooseError) {
-      if (error.message === "User not found") {
-        res.status(404).json({ message: error.message });
-      }
-      res.status(500).json({ message: error.message });
-    }
-
-    res.status(500).json({ message: "Unknown error occurred" });
+    errorHandler(error, res);
   }
 };
 export { updateUserRequest };
