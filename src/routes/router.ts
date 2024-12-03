@@ -1,10 +1,11 @@
 import express from 'express';
-import recipesRouter from './recipesRoutes.js';
-import usersRouter from './usersRoutes.js';
-import authRouter from './authRoutes.js';
-import favoritesRouter from './favoritesRoutes.js';
+import recipesRouter from './recipesRoutes';
+import usersRouter from './usersRoutes';
+import authRouter from './authRoutes';
+import favoritesRouter from './favoritesRoutes';
 
 const router = express.Router();
+
 
 router.use('/recipes', recipesRouter); 
 

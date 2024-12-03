@@ -1,18 +1,19 @@
-import { Favorite } from "../models/Favorites.js";
+import mongoose from "mongoose";
+import { Favorite, IFavorite } from "../models/Favorites";
 
 export const addRecipeToUserFavorites = async (
-  userId,
-  favoritesId,
-  recipeId
-) => {
-  const existingFavorite =  await Favorite.findById(favoritesId);
+  userId: mongoose.Types.ObjectId,
+  favoritesId: mongoose.Types.ObjectId,
+  recipeId: mongoose.Types.ObjectId,
+): Promise<IFavorite> => {
+  const existingFavorite: IFavorite | null =  await Favorite.findById(favoritesId);
 
   const updateFavoriteRecipes = () => {
     if (!existingFavorite) {
       return new Favorite({ userId, recipes: [recipeId] });
     }
 
-    const recipeExists = existingFavorite.recipes
+    const recipeExists: boolean = existingFavorite.recipes
       .map((id) => id.toString())
       .includes(recipeId.toString());
 
@@ -25,7 +26,7 @@ export const addRecipeToUserFavorites = async (
     return existingFavorite;
   };
 
-  const newFavorite = updateFavoriteRecipes();
+  const newFavorite: IFavorite = updateFavoriteRecipes();
 
   await newFavorite.save();
 
@@ -34,15 +35,15 @@ export const addRecipeToUserFavorites = async (
 
 
 
-export const removeRecipeFromUserFavorites = async (favoritesId, recipeId) => {
-  const favorite = await Favorite.findById(favoritesId);
+export const removeRecipeFromUserFavorites = async (favoritesId: string, recipeId: string,) => {
+  const favorite: IFavorite | null = await Favorite.findById(favoritesId);
 
   if (!favorite) {
     throw new Error("User has no favorite recipes");
   }
 
   favorite.recipes = favorite.recipes.filter(
-    (id) => id.toString() !== recipeId
+    (favorite) => favorite._id.toString() !== recipeId
   );
 
   await favorite.save();
@@ -50,13 +51,13 @@ export const removeRecipeFromUserFavorites = async (favoritesId, recipeId) => {
   return favorite;
 };
 
-export const getUserFavoriteRecipes = async (userId) => {
+export const getUserFavoriteRecipes = async (userId: string) => {
   const favorite = await Favorite.findOne({ userId }).populate("recipes");
 
   return favorite ? favorite.recipes : null;
 };
 
-export const getUserFavoritesId = async (userId) => {
+export const getUserFavoritesId = async (userId: string) => {
   const favorite = await Favorite.findOne({ userId });
 
   if(favorite){
