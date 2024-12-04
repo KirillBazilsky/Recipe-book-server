@@ -2,8 +2,8 @@ import {
   addRecipeToFavorites,
   removeRecipeFromFavorites,
   getUserFavorites,
-} from "../controllers/favoritesController.js";
-import { authMiddleware } from "../middlewares/authMiddleware.js";
+} from "../controllers/favoritesController";
+import { authMiddleware } from "../middlewares/authMiddleware";
 import express from 'express';
 
 const favoritesRouter = express.Router();
