@@ -1,4 +1,4 @@
-import { Response, response } from "express";
+import { Response } from "express";
 import { JwtPayload } from "jsonwebtoken";
 import { MongoServerError } from "mongodb";
 import { userMessages } from "../config/constants";
@@ -31,7 +31,7 @@ export const isUserJwtPayload = (
   );
 };
 
-export const errorHandler = (error: unknown, res: Response) => {
+export const errorHandler = (error: unknown, res: Response): Response => {
   if (error instanceof MongoServerError) {
     if (error.code === 11000) {
       return res
@@ -41,7 +41,7 @@ export const errorHandler = (error: unknown, res: Response) => {
   }
 
   if (error instanceof Error) {
-    if (userMessages.includes(error.message)) {
+    if (Object.values(userMessages).includes(error.message)) {
       return res.status(400).json({ message: error.message });
     }
   }
@@ -52,3 +52,11 @@ export const errorHandler = (error: unknown, res: Response) => {
 export const  toString = (
   value: ParsedQs | string | string[] | ParsedQs[] | undefined
 ): string | undefined => (typeof value === "string" ? value : undefined);
+
+export const validateEntity = (entity: unknown, res: Response) => {
+  if (!entity) {
+    return res.status(400).json({ message: "Invalid credentials" });
+  }
+
+  return
+}

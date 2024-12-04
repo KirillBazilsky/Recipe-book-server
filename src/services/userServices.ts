@@ -1,17 +1,12 @@
-import mongoose from "mongoose";
 import { IUser, User } from "../models/Users";
 import { mergeDefined } from "./helpers";
-
-export const findUserByEmail = async (email: string) => User.findOne({ email });
-
-export const findUserById = async (id: string) => User.findById(id);
 
 export const createUser = async (
   name: string,
   email: string,
   password: string
 ) => {
-  const existingUser: IUser | null = await findUserByEmail(email);
+  const existingUser: IUser | null = await User.findOne({ email });
 
   if (existingUser) {
     throw new Error("User with this email already exists");

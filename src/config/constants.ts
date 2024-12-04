@@ -9,8 +9,10 @@ export const cookieOptions: ICookieOptions = {
     maxAge: ONE_HOUR, 
   };
 
-export const userMessages: string[] = [
-  "User with this email already exists",
-  "ValidationError",
-  "User not found"
-]
+export const userMessages: Record<string, string> = {
+  emailExist: "User with this email already exists",
+  validationError: "ValidationError",
+  notFound: "User not found",
+  invalidCredentials: "Invalid credentials",
+  userCreationError: "Error while create user"
+}

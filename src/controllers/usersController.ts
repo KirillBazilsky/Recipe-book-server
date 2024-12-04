@@ -1,11 +1,12 @@
 import { Response, Request } from "express";
-import { findUserById, updateUser } from "../services/userServices";
+import { updateUser } from "../services/userServices";
 import { errorHandler } from "../services/helpers";
+import { User } from "../models/Users";
 
 const updateUserRequest = async (
   req: Request,
   res: Response
-): Promise<Response | void> => {
+): Promise<Response> => {
   try {
     const { userId } = req.params;
 
@@ -27,24 +28,23 @@ const updateUserRequest = async (
       user: { name: user.name, email: user.email, id: user.id },
     });
   } catch (error: unknown) {
-    errorHandler(error, res);
+    return errorHandler(error, res);
   }
 };
 
 export const getUser = async (
   req: Request,
   res: Response
-): Promise<Response | void> => {
+): Promise<Response> => {
   try {
     const { userId } = req.params;
-
     const { userId: authUserId } = req.user ;
 
     if (userId !== authUserId) {
       return res.status(404).json({ error: "Access denied" });
     }
 
-    const user = await findUserById(userId);
+    const user = await User.findById(userId);
 
     if (!user) {
       return res.status(404).json({ error: "User not found" });
@@ -59,7 +59,7 @@ export const getUser = async (
       },
     });
   } catch (error: unknown) {
-    errorHandler(error, res);
+    return errorHandler(error, res);
   }
 };
 export { updateUserRequest };

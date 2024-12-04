@@ -5,8 +5,6 @@ import authRouter from './authRoutes';
 import favoritesRouter from './favoritesRoutes';
 
 const router = express.Router();
-
-
 router.use('/recipes', recipesRouter); 
 
 router.use('/users', usersRouter);

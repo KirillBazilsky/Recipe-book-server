@@ -1,31 +1,18 @@
 import { errorHandler } from "../services/helpers";
 import { cookieOptions } from "../config/constants";
 import {
-  createUser,
-  findUserByEmail,
-  checkUserPassword,
-  createToken,
+  authenticateUser,
+  createUserWithToken,
 } from "../services/authServices";
 import { Request, Response } from "express";
 
 export const loginUser = async (
   req: Request,
   res: Response
-): Promise<Response | void> => {
+): Promise<Response> => {
   try {
     const { email, password } = req.body.data;
-    const user = await findUserByEmail(email);
-
-    if (!user) {
-      return res.status(400).json({ message: "Invalid credentials" });
-    }
-    const matched = await checkUserPassword(user, password);
-
-    if (!matched) {
-      return res.status(400).json({ message: "Invalid credentials" });
-    }
-
-    const token = createToken(user);
+    const { user, token } = await authenticateUser(email, password);
 
     res.cookie("token", token, cookieOptions);
 
@@ -34,24 +21,18 @@ export const loginUser = async (
       user: { name: user.name, email: user.email, id: user.id },
     });
   } catch (error: unknown) {
-    errorHandler(error, res);
+    return errorHandler(error, res);
   }
 };
 
 export const registerUser = async (
   req: Request,
   res: Response
-): Promise<Response | void> => {
+): Promise<Response> => {
   try {
     const { name, email, password } = req.body.data;
 
-    const user = await createUser(name, email, password);
-
-    if (!user) {
-      return res.status(500).json({ message: "Server error" });
-    }
-
-    const token = createToken(user);
+    const {user, token } = await createUserWithToken(name, email, password)
 
     res.cookie("token", token, cookieOptions);
 
@@ -60,6 +41,6 @@ export const registerUser = async (
       user: { name: user.name, email: user.email, id: user.id },
     });
   } catch (error: unknown) {
-    errorHandler(error, res);
+    return errorHandler(error, res);
   }
 };

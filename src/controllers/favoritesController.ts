@@ -9,7 +9,7 @@ import { errorHandler } from "../services/helpers";
 export const addRecipeToFavorites = async (
   req: Request,
   res: Response
-): Promise<Response | void> => {
+): Promise<Response> => {
   try {
     const { userId, favoritesId } = req.user;
     const { recipeId } = req.body.data;
@@ -19,14 +19,14 @@ export const addRecipeToFavorites = async (
 
     return res.status(200).json({ message: "Recipe added to favorites" });
   } catch (error: unknown) {
-    errorHandler(error, res);
+    return errorHandler(error, res);
   }
 };
 
 export const removeRecipeFromFavorites = async (
   req: Request,
   res: Response
-): Promise<Response | void> => {
+): Promise<Response> => {
   try {
     const { favoritesId } = req.user;
     const { recipeId } = req.body;
@@ -35,20 +35,20 @@ export const removeRecipeFromFavorites = async (
 
     return res.status(200).json({ message: "Recipe removed from favorites" });
   } catch (error: unknown) {
-    errorHandler(error, res);
+    return errorHandler(error, res);
   }
 };
 
 export const getUserFavorites = async (
   req: Request,
   res: Response
-): Promise<Response | void> => {
+): Promise<Response> => {
   try {
     const { userId } = req.user;
     const recipes = await getUserFavoriteRecipes(userId);
 
     return res.status(200).json(recipes ?? []);
   } catch (error: unknown) {
-    errorHandler(error, res);
+    return errorHandler(error, res);
   }
 };

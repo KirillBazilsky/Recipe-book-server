@@ -1,5 +1,4 @@
 import { Response, Request } from "express";
-import { Error } from "mongoose";
 import { Recipe } from "../models/Recipes";
 import {
   createFilter,
@@ -14,7 +13,7 @@ import { errorHandler, toString } from "../services/helpers";
 export const addRecipe = async (
   req: Request,
   res: Response
-): Promise<Response | void> => {
+): Promise<Response> => {
   try {
     const { name, ingredients, instructions, category } = req.body.data;
 
@@ -37,14 +36,14 @@ export const addRecipe = async (
 
     return res.status(201).json(recipe);
   } catch (error: unknown) {
-    errorHandler(error, res);
+    return errorHandler(error, res);
   }
 };
 
 export const updateRecipe = async (
   req: Request,
   res: Response
-): Promise<Response | void> => {
+): Promise<Response> => {
   try {
     const { recipeId } = req.params;
     const { userId } = req.user;
@@ -69,14 +68,14 @@ export const updateRecipe = async (
 
     return res.status(201).json(recipe);
   } catch (error: unknown) {
-    errorHandler(error, res);
+    return errorHandler(error, res);
   }
 };
 
 export const deleteRecipe = async (
   req: Request,
   res: Response
-): Promise<Response | void> => {
+): Promise<Response> => {
   try {
     const { recipeId } = req.params;
     const { userId } = req.user;
@@ -96,16 +95,16 @@ export const deleteRecipe = async (
 
     await deleteRecipeById(recipeId);
 
-    res.status(200).json({ message: "Recipe deleted successfully" });
+    return res.status(200).json({ message: "Recipe deleted successfully" });
   } catch (error: unknown) {
-    errorHandler(error, res);
+    return errorHandler(error, res);
   }
 };
 
 export const getRecipes = async (
   req: Request,
   res: Response
-): Promise<Response | void> => {
+): Promise<Response> => {
   try {
     const { userId, name, category, ingredients, instructions, creator } =
       req.query;
@@ -123,14 +122,14 @@ export const getRecipes = async (
 
     return res.status(200).json(recipes.length ? { recipes } : { recipes: [] });
   } catch (error: unknown) {
-    errorHandler(error, res);
+    return errorHandler(error, res);
   }
 };
 
 export const getRecipe = async (
   req: Request,
   res: Response
-): Promise<Response | void> => {
+): Promise<Response> => {
   try {
     const { recipeId } = req.params;
     const recipe = await findRecipeById(recipeId);
@@ -141,10 +140,6 @@ export const getRecipe = async (
 
     return res.status(200).json({ recipe });
   } catch (error: unknown) {
-    if (error instanceof Error) {
-      return res.status(500).json({ error: error.message });
-    }
-
-    return res.status(500).json({ message: "Unknown error occurred" });
+    return errorHandler(error, res);
   }
 };
