@@ -5,7 +5,7 @@ const ONE_HOUR = 3600000;
 export const cookieOptions: ICookieOptions = {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
+    sameSite: "none",
     maxAge: ONE_HOUR, 
   };
 
