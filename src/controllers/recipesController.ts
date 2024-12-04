@@ -16,7 +16,6 @@ export const addRecipe = async (
 ): Promise<Response> => {
   try {
     const { name, ingredients, instructions, category } = req.body.data;
-
     const { userId, name: userName } = req.user;
 
     if (!userId) {
