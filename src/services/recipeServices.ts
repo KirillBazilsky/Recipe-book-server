@@ -1,6 +1,7 @@
 import { IRecipe, Recipe } from "../models/Recipes";
 import { mergeDefined } from "./helpers";
 import { IFilters } from "../interfaces/filters";
+import { userMessages } from "../config/constants";
 
 export const findRecipeById = async (id: string) => Recipe.findById(id);
 
@@ -33,7 +34,7 @@ export const deleteRecipeById = async (recipeId: string) => {
     const recipe = await Recipe.findByIdAndDelete(recipeId);
 
     if (!recipe) {
-      throw new Error(`Recipe with id ${recipeId} not found`);
+      throw new Error(userMessages.recipeRemoved);
     }
 
     return recipe;

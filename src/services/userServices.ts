@@ -1,3 +1,4 @@
+import { userMessages } from "../config/constants";
 import { IUser, User } from "../models/Users";
 import { mergeDefined } from "./helpers";
 
@@ -9,7 +10,7 @@ export const createUser = async (
   const existingUser: IUser | null = await User.findOne({ email });
 
   if (existingUser) {
-    throw new Error("User with this email already exists");
+    throw new Error(userMessages.emailExist);
   }
 
   const user = new User({ name, email, password });
@@ -28,7 +29,7 @@ export const updateUser = async (
   const user: IUser | null = await User.findById(userId);
 
   if (!user) {
-    throw new Error("User not found");
+    throw new Error(userMessages.notFound);
   }
 
   const updatedData: { name?: string; email?: string; password?: string } = {

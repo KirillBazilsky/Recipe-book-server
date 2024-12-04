@@ -13,7 +13,7 @@ export const createUser = async (
   const existingUser = await User.findOne({ email });
 
   if (existingUser) {
-    throw new Error("User with this email already exists");
+    throw new Error(userMessages.emailExist);
   }
 
   const user = new User({ name, email, password });

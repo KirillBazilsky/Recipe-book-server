@@ -5,6 +5,7 @@ import {
 } from "../services/favoritesServices";
 import { Response, Request } from "express";
 import { errorHandler } from "../services/helpers";
+import { userMessages } from "../config/constants";
 
 export const addRecipeToFavorites = async (
   req: Request,
@@ -17,7 +18,7 @@ export const addRecipeToFavorites = async (
 
     await addRecipeToUserFavorites(userId, favoritesId, recipeId);
 
-    return res.status(200).json({ message: "Recipe added to favorites" });
+    return res.status(200).json({ message: userMessages.recipeAdded });
   } catch (error: unknown) {
     return errorHandler(error, res);
   }
@@ -33,7 +34,7 @@ export const removeRecipeFromFavorites = async (
 
     await removeRecipeFromUserFavorites(favoritesId, recipeId);
 
-    return res.status(200).json({ message: "Recipe removed from favorites" });
+    return res.status(200).json({ message: userMessages.recipeRemoved });
   } catch (error: unknown) {
     return errorHandler(error, res);
   }

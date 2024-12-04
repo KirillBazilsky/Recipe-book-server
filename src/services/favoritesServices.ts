@@ -1,34 +1,42 @@
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
 import { Favorite, IFavorite } from "../models/Favorites";
+import { userMessages } from "../config/constants";
+
+const updateFavoriteRecipes = (
+  userId: string,
+  recipeId: string,
+  existingFavorite: IFavorite | null
+): IFavorite => {
+  if (!existingFavorite) {
+    return new Favorite({ userId, recipes: [recipeId] });
+  }
+  const recipeExists: boolean = existingFavorite.recipes
+    .map((id) => id.toString())
+    .includes(recipeId.toString());
+
+  if (recipeExists) {
+    throw new Error(userMessages.duplicateFavorites);
+  }
+
+  existingFavorite.recipes.push(new Types.ObjectId(recipeId));
+
+  return existingFavorite;
+};
 
 export const addRecipeToUserFavorites = async (
   userId: string,
   favoritesId: string,
-  recipeId: mongoose.Types.ObjectId
+  recipeId: string
 ): Promise<IFavorite> => {
   const existingFavorite: IFavorite | null = await Favorite.findById(
     favoritesId
   );
 
-  const updateFavoriteRecipes = () => {
-    if (!existingFavorite) {
-      return new Favorite({ userId, recipes: [recipeId] });
-    }
-
-    const recipeExists: boolean = existingFavorite.recipes
-      .map((id) => id.toString())
-      .includes(recipeId.toString());
-
-    if (recipeExists) {
-      throw new Error("Recipe already exists in favorites");
-    }
-
-    existingFavorite.recipes.push(recipeId);
-
-    return existingFavorite;
-  };
-
-  const newFavorite: IFavorite = updateFavoriteRecipes();
+  const newFavorite: IFavorite = updateFavoriteRecipes(
+    userId,
+    recipeId,
+    existingFavorite
+  );
 
   await newFavorite.save();
 
@@ -42,7 +50,7 @@ export const removeRecipeFromUserFavorites = async (
   const favorite: IFavorite | null = await Favorite.findById(favoritesId);
 
   if (!favorite) {
-    throw new Error("User has no favorite recipes");
+    throw new Error(userMessages.noFavorites);
   }
 
   try {
@@ -50,10 +58,10 @@ export const removeRecipeFromUserFavorites = async (
       { _id: favoritesId },
       { $pull: { recipes: recipeId } }
     );
-    
+
     return favorite;
   } catch (error: unknown) {
-    throw  error;
+    throw error;
   }
 };
 

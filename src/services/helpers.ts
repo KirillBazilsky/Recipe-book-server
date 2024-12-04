@@ -36,27 +36,21 @@ export const errorHandler = (error: unknown, res: Response): Response => {
     if (error.code === 11000) {
       return res
         .status(400)
-        .json({ message: "Recipe with this name already exists" });
+        .json({ message: userMessages.existingRecipe });
     }
   }
 
-  if (error instanceof Error) {
-    if (Object.values(userMessages).includes(error.message)) {
-      return res.status(400).json({ message: error.message });
-    }
+  if (
+    error instanceof Error &&
+    Object.values(userMessages).includes(error.message)
+  ) {
+    return res.status(400).json({ message: error.message });
   }
 
-  return res.status(500).json({ message: "Unknown error occurred" });
+  return res.status(500).json({ message: userMessages.unknown });
 };
 
-export const  toString = (
+export const toString = (
   value: ParsedQs | string | string[] | ParsedQs[] | undefined
 ): string | undefined => (typeof value === "string" ? value : undefined);
 
-export const validateEntity = (entity: unknown, res: Response) => {
-  if (!entity) {
-    return res.status(400).json({ message: "Invalid credentials" });
-  }
-
-  return
-}

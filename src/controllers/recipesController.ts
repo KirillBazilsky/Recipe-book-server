@@ -9,6 +9,7 @@ import {
   updateRecipeById,
 } from "../services/recipeServices";
 import { errorHandler, toString } from "../services/helpers";
+import { userMessages } from "../config/constants";
 
 export const addRecipe = async (
   req: Request,
@@ -19,7 +20,7 @@ export const addRecipe = async (
     const { userId, name: userName } = req.user;
 
     if (!userId) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: userMessages.userNotFound });
     }
 
     const recipe = await createRecipe({
@@ -51,11 +52,11 @@ export const updateRecipe = async (
     const existingRecipe = await Recipe.findById(recipeId);
 
     if (!existingRecipe) {
-      return res.status(404).json({ error: "Recipe not found" });
+      return res.status(404).json({ error: userMessages.recipeNotFound });
     }
 
     if (existingRecipe.creator?.id !== userId) {
-      return res.status(404).json({ error: "Access denied" });
+      return res.status(404).json({ error: userMessages.validationError });
     }
 
     const recipe = await updateRecipeById(recipeId, {
@@ -81,20 +82,20 @@ export const deleteRecipe = async (
     const existingRecipe = await Recipe.findById(recipeId);
 
     if (!existingRecipe) {
-      return res.status(404).json({ error: "Recipe not found" });
+      return res.status(404).json({ error: userMessages.recipeNotFound });
     }
 
     if (existingRecipe.creator?.id !== userId) {
-      return res.status(404).json({ error: "Access denied" });
+      return res.status(404).json({ error: userMessages.validationError });
     }
 
     if (!recipeId) {
-      return res.status(400).json({ error: "Recipe ID is required" });
+      return res.status(400).json({ error: userMessages.idRequired });
     }
 
     await deleteRecipeById(recipeId);
 
-    return res.status(200).json({ message: "Recipe deleted successfully" });
+    return res.status(200).json({ message: userMessages.recipeRemoved });
   } catch (error: unknown) {
     return errorHandler(error, res);
   }
@@ -119,7 +120,7 @@ export const getRecipes = async (
 
     const recipes = await findRecipes(filter);
 
-    return res.status(200).json(recipes.length ? { recipes } : { recipes: [] });
+    return res.status(200).json({ recipes });
   } catch (error: unknown) {
     return errorHandler(error, res);
   }
@@ -134,7 +135,7 @@ export const getRecipe = async (
     const recipe = await findRecipeById(recipeId);
 
     if (!recipe) {
-      return res.status(404).json({ message: "Recipe not found" });
+      return res.status(404).json({ message: userMessages.notFound });
     }
 
     return res.status(200).json({ recipe });

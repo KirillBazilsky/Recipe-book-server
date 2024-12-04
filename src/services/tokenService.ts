@@ -1,5 +1,6 @@
 import jwt, { JwtPayload } from "jsonwebtoken";
-import { IUser } from "src/models/Users";
+import { userMessages } from "../config/constants";
+import { IUser } from "../models/Users";
 
 class TokenService {
   private secret: string | undefined;
@@ -12,7 +13,7 @@ class TokenService {
 
   generateToken(user: IUser): string {
     if(!this.secret) {
-      throw new Error("Missing process.env.JWT_SECRET");
+      throw new Error(userMessages.missingSecret);
     }
 
     const {_id: userId, name, favoritesId} = user;
@@ -28,12 +29,12 @@ class TokenService {
   verifyToken(token: string): JwtPayload | string {
     try {
       if(!this.secret) {
-        throw new Error("Missing process.env.JWT_SECRET");
+        throw new Error(userMessages.missingSecret);
       }
 
       return jwt.verify(token, this.secret) ; 
     } catch (error) {
-      throw new Error("Invalid token");
+      throw new Error(userMessages.invalidToken);
     }
   }
 }

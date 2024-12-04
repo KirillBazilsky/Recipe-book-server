@@ -17,7 +17,6 @@ export const loginUser = async (
     res.cookie("token", token, cookieOptions);
 
     return res.status(200).json({
-      message: "Login successful",
       user: { name: user.name, email: user.email, id: user.id },
     });
   } catch (error: unknown) {
@@ -32,12 +31,11 @@ export const registerUser = async (
   try {
     const { name, email, password } = req.body.data;
 
-    const {user, token } = await createUserWithToken(name, email, password)
+    const { user, token } = await createUserWithToken(name, email, password);
 
     res.cookie("token", token, cookieOptions);
 
     return res.status(201).json({
-      message: "User created successfully",
       user: { name: user.name, email: user.email, id: user.id },
     });
   } catch (error: unknown) {
