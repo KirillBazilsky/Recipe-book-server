@@ -2,6 +2,7 @@ import { IRecipe, Recipe } from "../models/Recipes";
 import { mergeDefined } from "./helpers";
 import { IFilters } from "../interfaces/filters";
 import { userMessages } from "../config/constants";
+import { ParsedQs } from "qs";
 
 export const findRecipeById = async (id: string) => Recipe.findById(id);
 
@@ -77,15 +78,15 @@ export const createFilter = ({
 
 export const findRecipes = async (
   filter: Record<string, any>,
-  limit?: number,
-  page?: number
+  limit?: string | string[] | ParsedQs | ParsedQs[],
+  page?: string | string[] | ParsedQs | ParsedQs[],
 ): Promise<{ recipes: IRecipe[] | []; count: number }> => {
-  const parsedLimit = Math.max(1, limit ?? 10);
-  const parsedPage = Math.max(1, page ?? 1);
+  const parsedLimit = Math.max(1, Number(limit));
+  const parsedPage = Math.max(1, Number(page));
   const count = await Recipe.countDocuments(filter);
   const recipes = await Recipe.find(filter)
     .limit(parsedLimit)
-    .skip((parsedPage - 1) * parsedLimit)
+    .skip((parsedPage - 1) * parsedLimit);
 
   return { recipes, count };
 };
