@@ -77,11 +77,11 @@ export const createFilter = ({
 
 export const findRecipes = async (
   filter: Record<string, any>,
-  limit?: string,
-  page?: string
+  limit?: number,
+  page?: number
 ): Promise<{ recipes: IRecipe[] | []; count: number }> => {
-  const parsedLimit = Math.max(1, Number(limit ?? 10));
-  const parsedPage = Math.max(1, Number(page ?? 1));
+  const parsedLimit = Math.max(1, limit ?? 10);
+  const parsedPage = Math.max(1, page ?? 1);
   const count = await Recipe.countDocuments(filter);
   const recipes = await Recipe.find(filter)
     .limit(parsedLimit)

@@ -126,8 +126,8 @@ export const getRecipes = async (
     });
     const { recipes, count } = await findRecipes(
       filter,
-      toString(limit),
-      toString(page)
+      Number(limit),
+      Number(page)
     );
 
     return res.status(200).json({ recipes, count });
