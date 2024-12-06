@@ -124,7 +124,11 @@ export const getRecipes = async (
       instructions: toString(instructions),
       creator: toString(creator),
     });
-    const {recipes , count} = await findRecipes(filter, toString(limit), toString(page));
+    const { recipes, count } = await findRecipes(
+      filter,
+      toString(limit),
+      toString(page)
+    );
 
     return res.status(200).json({ recipes, count });
   } catch (error: unknown) {
