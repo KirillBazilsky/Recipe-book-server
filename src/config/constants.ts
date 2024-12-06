@@ -3,11 +3,11 @@ import { ICookieOptions } from "../interfaces/cookieOption";
 const ONE_HOUR = 3600000;
 
 export const cookieOptions: ICookieOptions = {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "none",
-    maxAge: ONE_HOUR, 
-  };
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+  maxAge: ONE_HOUR,
+};
 
 export const userMessages: Record<string, string> = {
   unknown: "Unknown error occurred",

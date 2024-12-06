@@ -76,5 +76,16 @@ export const createFilter = ({
 };
 
 export const findRecipes = async (
-  filter: Record<string, any>
-): Promise<IRecipe[] | []> => Recipe.find(filter);
+  filter: Record<string, any>,
+  limit?: string,
+  page?: string
+): Promise<{ recipes: IRecipe[] | []; count: number }> => {
+  const parsedLimit = Math.max(1, Number(limit ?? 10));
+  const parsedPage = Math.max(1, Number(page ?? 1));
+  const count = await Recipe.countDocuments(filter);
+  const recipes = await Recipe.find(filter)
+    .limit(parsedLimit)
+    .skip((parsedPage - 1) * parsedLimit)
+
+  return { recipes, count };
+};
