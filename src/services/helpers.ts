@@ -47,7 +47,7 @@ export const errorHandler = (error: unknown, res: Response): Response => {
     return res.status(400).json({ message: error.message });
   }
 
-  return res.status(500).json({ message: userMessages.unknown });
+  return res.status(500).json({ message: error });
 };
 
 export const toString = (
