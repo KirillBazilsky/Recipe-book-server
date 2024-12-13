@@ -3,6 +3,7 @@ import { Recipe } from "../models/Recipes";
 import {
   createFilter,
   createRecipe,
+  updateRecipeImage,
   deleteRecipeById,
   findRecipeById,
   findRecipes,
@@ -16,8 +17,10 @@ export const addRecipe = async (
   res: Response
 ): Promise<Response> => {
   try {
-    const { name, ingredients, instructions, category } = req.body.data;
+    const { name, ingredients, instructions, category } = req.body;
     const { userId, name: userName } = req.user;
+    const uploadedImagePath = req.file?.path;
+    const uploadedImageName = req.file?.originalname;
 
     if (!userId) {
       return res.status(404).json({ message: userMessages.userNotFound });
@@ -25,14 +28,17 @@ export const addRecipe = async (
 
     const recipe = await createRecipe({
       name,
-      ingredients,
+      ingredients: JSON.parse(ingredients),
       instructions,
       category,
       creator: {
         name: userName,
         id: userId,
       },
+      image: undefined,
     });
+
+    updateRecipeImage(recipe._id, uploadedImagePath, uploadedImageName);
 
     return res.status(201).json(recipe);
   } catch (error: unknown) {
@@ -47,7 +53,9 @@ export const updateRecipe = async (
   try {
     const { recipeId } = req.params;
     const { userId } = req.user;
-    const { name, ingredients, instructions, category } = req.body.data;
+    const { name, ingredients, instructions, category } = req.body;
+    const uploadedImagePath = req.file?.path;
+    const uploadedImageName = req.file?.originalname;
 
     const existingRecipe = await Recipe.findById(recipeId);
 
@@ -61,10 +69,12 @@ export const updateRecipe = async (
 
     const recipe = await updateRecipeById(recipeId, {
       name,
-      ingredients,
+      ingredients: JSON.parse(ingredients),
       instructions,
       category,
     });
+
+    updateRecipeImage(recipeId, uploadedImagePath, uploadedImageName);
 
     return res.status(201).json(recipe);
   } catch (error: unknown) {
@@ -124,11 +134,7 @@ export const getRecipes = async (
       instructions: toString(instructions),
       creator: toString(creator),
     });
-    const { recipes, count } = await findRecipes(
-      filter,
-      limit,
-      page
-    );
+    const { recipes, count } = await findRecipes(filter, limit, page);
 
     return res.status(200).json({ recipes, count });
   } catch (error: unknown) {

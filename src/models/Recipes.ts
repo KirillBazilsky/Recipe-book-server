@@ -15,6 +15,7 @@ export interface IRecipe extends Document {
   name: string;
   ingredients: IIngredient[];
   instructions: string;
+  image?: string;
   category?: string;
   creator?: ICreator;
   createdAt?: Date; 
@@ -26,7 +27,7 @@ const recipeSchema: Schema = new Schema<IRecipe>(
     name: { type: String, required: true, unique: true },
     ingredients: [
       {
-        _id: false, 
+        _id: false,
         name: { type: String, required: true },
         quantity: { type: String, required: true },
       },
@@ -37,6 +38,7 @@ const recipeSchema: Schema = new Schema<IRecipe>(
       name: { type: String },
       id: { type: String },
     },
+    image: { type: String },
   },
   { timestamps: true }
 );

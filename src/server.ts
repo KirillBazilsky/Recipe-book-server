@@ -1,4 +1,5 @@
 import express from "express";
+import path from "path";
 import cors from "cors";
 import mongoose from "mongoose";
 import bodyParser from "body-parser";
@@ -38,7 +39,8 @@ async function startServer() {
     app.use(bodyParser.json());
     app.use(cookieParser());
     app.use("/api", router);
-
+    app.use("/uploads", express.static(path.join(__dirname, "../src/uploads")));
+    
     app.listen(port, () => {
       console.log(`Server is running on http://localhost:${port}`);
     });
