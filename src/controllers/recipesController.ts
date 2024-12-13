@@ -106,9 +106,16 @@ export const getRecipes = async (
   res: Response
 ): Promise<Response> => {
   try {
-    const { userId, name, category, ingredients, instructions, creator } =
-      req.query;
-
+    const {
+      userId,
+      name,
+      category,
+      ingredients,
+      instructions,
+      creator,
+      limit,
+      page,
+    } = req.query;
     const filter = createFilter({
       userId: toString(userId),
       name: toString(name),
@@ -117,10 +124,13 @@ export const getRecipes = async (
       instructions: toString(instructions),
       creator: toString(creator),
     });
+    const { recipes, count } = await findRecipes(
+      filter,
+      limit,
+      page
+    );
 
-    const recipes = await findRecipes(filter);
-
-    return res.status(200).json({ recipes });
+    return res.status(200).json({ recipes, count });
   } catch (error: unknown) {
     return errorHandler(error, res);
   }
