@@ -3,6 +3,9 @@ import { mergeDefined } from "./helpers";
 import { IFilters } from "../interfaces/filters";
 import { userMessages } from "../config/constants";
 import { ParsedQs } from "qs";
+import fs from "fs";
+import path from "path";
+import mongoose from "mongoose";
 
 export const findRecipeById = async (id: string) => Recipe.findById(id);
 
@@ -79,7 +82,7 @@ export const createFilter = ({
 export const findRecipes = async (
   filter: Record<string, any>,
   limit?: string | string[] | ParsedQs | ParsedQs[],
-  page?: string | string[] | ParsedQs | ParsedQs[],
+  page?: string | string[] | ParsedQs | ParsedQs[]
 ): Promise<{ recipes: IRecipe[] | []; count: number }> => {
   const parsedLimit = Math.max(1, Number(limit));
   const parsedPage = Math.max(1, Number(page));
@@ -89,4 +92,29 @@ export const findRecipes = async (
     .skip((parsedPage - 1) * parsedLimit);
 
   return { recipes, count };
+};
+
+export const updateRecipeImage = async (
+  recipeId: mongoose.Types.ObjectId | string,
+  tempPath?: string,
+  originalName?: string
+): Promise<void> => {
+  if (!tempPath || !originalName) {
+    return;
+  }
+
+  const id = typeof(recipeId) === "string" ? recipeId : recipeId.toString();
+
+  try {
+    const newFileName = `${recipeId}${path.extname(originalName)}`;
+    const newFilePath = path.join(path.dirname(tempPath), newFileName);
+
+    fs.renameSync(tempPath, newFilePath);
+
+    await updateRecipeById(id, {
+      image: newFileName,
+    });
+  } catch (error) {
+    throw new Error();
+  }
 };

@@ -8,12 +8,13 @@ import {
 } from "../controllers/recipesController";
 import { authMiddleware } from "../middlewares/authMiddleware";
 import { validateRecipeId } from "../middlewares/validateRecipeId";
+import { uploadMiddleware } from "../middlewares/uploadMiddleware";
 
 const recipesRouter = express.Router();
 
-recipesRouter.post("/", authMiddleware, addRecipe);
+recipesRouter.post("/", authMiddleware, uploadMiddleware, addRecipe);
 
-recipesRouter.put("/:recipeId", authMiddleware, validateRecipeId, updateRecipe);
+recipesRouter.put("/:recipeId", authMiddleware, validateRecipeId, uploadMiddleware, updateRecipe);
 
 recipesRouter.delete("/:recipeId", authMiddleware, validateRecipeId, deleteRecipe);
 
