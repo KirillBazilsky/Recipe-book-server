@@ -3,7 +3,7 @@ import { mergeDefined } from "./helpers";
 import { IFilters } from "../interfaces/filters";
 import { userMessages } from "../config/constants";
 import { ParsedQs } from "qs";
-import fs from "fs";
+import { rename } from "fs/promises";
 import path from "path";
 import mongoose from "mongoose";
 
@@ -103,13 +103,13 @@ export const updateRecipeImage = async (
     return;
   }
 
-  const id = typeof(recipeId) === "string" ? recipeId : recipeId.toString();
+  const id = String(recipeId);
 
   try {
     const newFileName = `${recipeId}${path.extname(originalName)}`;
     const newFilePath = path.join(path.dirname(tempPath), newFileName);
 
-    fs.renameSync(tempPath, newFilePath);
+    await rename(tempPath, newFilePath);
 
     await updateRecipeById(id, {
       image: newFileName,
