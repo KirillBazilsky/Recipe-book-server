@@ -2,7 +2,11 @@ import multer from "multer";
 
 
 const storageConfig = multer.diskStorage({
-  destination: (req, file, cb) => {
+  destination: (
+    req: Express.Request,
+    file: Express.Multer.File,
+    cb: (error: Error | null, destination: string) => void
+  ) => {
     cb(null, "./src/uploads");
   },
 });
