@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document, Model } from 'mongoose';
+import mongoose, { Schema, Document, Model } from "mongoose";
 
 interface IIngredient {
   name: string;
@@ -18,8 +18,8 @@ export interface IRecipe extends Document {
   image?: string;
   category?: string;
   creator?: ICreator;
-  createdAt?: Date; 
-  updatedAt?: Date; 
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 const recipeSchema: Schema = new Schema<IRecipe>(
@@ -43,6 +43,7 @@ const recipeSchema: Schema = new Schema<IRecipe>(
   { timestamps: true }
 );
 
-recipeSchema.index({ name: 1 }, { unique: true });
-
-export const Recipe: Model<IRecipe> = mongoose.model<IRecipe>('Recipe', recipeSchema);
+export const Recipe: Model<IRecipe> = mongoose.model<IRecipe>(
+  "Recipe",
+  recipeSchema
+);
