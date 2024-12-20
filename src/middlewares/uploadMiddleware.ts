@@ -1,6 +1,5 @@
 import multer from "multer";
 
-
 const storageConfig = multer.diskStorage({
   destination: (
     req: Express.Request,
@@ -16,4 +15,4 @@ const upload = multer({
   limits: { fileSize: 20 * 1024 * 1024 }, //20Mb
 });
 
-export const uploadMiddleware = upload.single("image"); 
+export const uploadMiddleware = upload.single("image");
