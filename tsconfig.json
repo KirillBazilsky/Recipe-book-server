@@ -9,7 +9,7 @@
     "module": "CommonJS",
     "esModuleInterop": true,
     "target": "ESNext",
-    "types": ["node"],
+    "types": ["node", "multer"],
     "typeRoots": ["./node_modules/@types", "./src/types"],
     "moduleResolution": "node",
     "paths": {
