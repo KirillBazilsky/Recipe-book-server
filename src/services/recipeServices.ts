@@ -109,6 +109,9 @@ export const updateRecipeImage = async (
     const newFileName = `${recipeId}${path.extname(originalName)}`;
     const newFilePath = path.join(path.dirname(tempPath), newFileName);
 
+    console.log("Temp path:", tempPath);
+    console.log("File extension:", path.extname(originalName));
+
     await rename(tempPath, newFilePath);
 
     await updateRecipeById(id, {
