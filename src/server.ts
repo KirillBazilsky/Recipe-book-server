@@ -39,7 +39,7 @@ async function startServer() {
     app.use(bodyParser.json());
     app.use(cookieParser());
     app.use("/api", router);
-    app.use("/uploads", express.static(path.join(__dirname, "../src/uploads")));
+    app.use("/uploads", express.static(path.join(__dirname, process.env.UPLOAD_DIR || "/tmp/uploads")));
     
     app.listen(port, () => {
       console.log(`Server is running on http://localhost:${port}`);
