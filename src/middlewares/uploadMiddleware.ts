@@ -6,7 +6,7 @@ const storageConfig = multer.diskStorage({
     file: Express.Multer.File,
     cb: (error: Error | null, destination: string) => void
   ) => {
-    cb(null, "./src/uploads");
+    cb(null, process.env.UPLOAD_DIR || "/tmp/uploads");
   },
 });
 
