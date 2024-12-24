@@ -5,6 +5,7 @@ import { userMessages } from "../config/constants";
 import { ParsedQs } from "qs";
 import { rename } from "fs/promises";
 import path from "path";
+import fs from "fs/promises";
 import mongoose from "mongoose";
 
 export const findRecipeById = async (id: string) => Recipe.findById(id);
@@ -94,6 +95,30 @@ export const findRecipes = async (
   return { recipes, count };
 };
 
+export const checkUploadDirectoryExists = async (
+  uploadDirectory: string
+): Promise<boolean> => {
+  try {
+    await fs.access(uploadDirectory);
+
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
+
+export const createUploadDirectory = async (
+  uploadDirectory: string
+): Promise<void> => {
+  try {
+    await fs.mkdir(uploadDirectory, { recursive: true });
+    console.log(`Папка '${uploadDirectory}' была успешно создана.`);
+  } catch (error) {
+    console.error(`Ошибка при создании папки '${uploadDirectory}':`, error);
+    throw new Error("Не удалось создать папку для загрузки");
+  }
+};
+
 export const updateRecipeImage = async (
   recipeId: mongoose.Types.ObjectId | string,
   tempPath?: string,
@@ -104,8 +129,13 @@ export const updateRecipeImage = async (
   }
 
   const id = String(recipeId);
+  const uploadDirectory = process.env.UPLOAD_DIR || "/tmp/uploads";
 
   try {
+    if (!(await checkUploadDirectoryExists(uploadDirectory))) {
+      await createUploadDirectory(uploadDirectory);
+    }
+    
     const newFileName = `${recipeId}${path.extname(originalName)}`;
     const newFilePath = path.join(path.dirname(tempPath), newFileName);
 
